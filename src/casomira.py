@@ -13,6 +13,8 @@ from updater import check_for_updates
 
 ctk.set_appearance_mode("System")
 ctk.set_default_color_theme("blue")
+ctk.set_widget_scaling(0.9)  # Zvětší všechny widgety o 50% pro lepší čitelnost
+ctk.set_window_scaling(0.9)  # Zvětší celé okno o 50% pro lepší čitelnost
 
 SINGLE_ESP_IP = "192.168.4.1"  # IP adresa jediného ESP8266
 URL = f"http://{SINGLE_ESP_IP}/data"
@@ -270,14 +272,14 @@ def main_app():
 
     # Nastavení stylu pro Treeview s větším písmem
     style = ttk.Style()
-    style.configure("Treeview", font=("Arial", 16))
-    style.configure("Treeview.Heading", font=("Arial", 16, "bold"))
+    style.configure("Treeview", font=("Segoe UI", 16))
+    style.configure("Treeview.Heading", font=("Segoe UI", 16, "bold"))
 
     # --- 1. Zobrazení Dat (Tabulka) ---
     frame_table = ctk.CTkFrame(root)
     frame_table.pack(side="left", padx=20, pady=20, fill="both", expand=True)
 
-    title_table = ctk.CTkLabel(frame_table, text="Historie Časů", font=ctk.CTkFont(size=24, weight="bold"))
+    title_table = ctk.CTkLabel(frame_table, text="Historie Časů", font=("Segoe UI", 24, "bold"))
     title_table.pack(padx=5, pady=(5, 10), anchor="w")
 
     # Definice sloupců pro Treeview
@@ -300,7 +302,7 @@ def main_app():
     frame_buttons = ctk.CTkFrame(root)
     frame_buttons.pack(side="right", padx=10, pady=10, fill="y")
 
-    title_buttons = ctk.CTkLabel(frame_buttons, text="Správa Dat", font=ctk.CTkFont(size=20, weight="bold"))
+    title_buttons = ctk.CTkLabel(frame_buttons, text="Správa Dat", font=("Segoe UI", 20, "bold"))
     title_buttons.pack(padx=5, pady=(5, 10), anchor="w")
 
     delete_last_button = ctk.CTkButton(frame_buttons, text="Odstranit poslední", command=delete_last)
@@ -309,14 +311,14 @@ def main_app():
     delete_all_button = ctk.CTkButton(frame_buttons, text="Odstranit vše", command=delete_all)
     delete_all_button.pack(pady=5, fill="x")
     
-    update_button = ctk.CTkButton(frame_buttons, text="🔄 Kontrola aktualizací", command=check_and_apply_update)
+    update_button = ctk.CTkButton(frame_buttons, text="Kontrola aktualizací", command=check_and_apply_update)
     update_button.pack(pady=5, fill="x")
 
     # --- 2. Zobrazení aktuálních hodnot (Labely) ---
     frame_status = ctk.CTkFrame(root)
     frame_status.pack(padx=10, pady=10, fill="x")
 
-    title_status = ctk.CTkLabel(frame_status, text="Aktuální Hodnoty", font=ctk.CTkFont(size=20, weight="bold"))
+    title_status = ctk.CTkLabel(frame_status, text="Aktuální Hodnoty", font=("Segoe UI", 20, "bold"))
     title_status.grid(row=0, column=0, columnspan=2, padx=5, pady=(5, 10), sticky='w')
 
     ctk.CTkLabel(frame_status, text="Systemový Čas:").grid(row=1, column=0, padx=5, pady=5, sticky='e')
@@ -344,7 +346,7 @@ def main_app():
     auto_measure_check.grid(row=6, column=1, padx=5, pady=5, sticky='w')
 
     # --- 3. Tlačítko pro měření ---
-    measure_button = ctk.CTkButton(root, text="📏 Měřit", command=update_display, font=ctk.CTkFont(size=14, weight="bold"))
+    measure_button = ctk.CTkButton(root, text="Měřit", command=update_display, font=("Segoe UI", 14, "bold"))
     measure_button.pack(pady=15)
 
     # Inicializace – pouze načteme historii, bez automatického měření
