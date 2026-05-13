@@ -1,0 +1,13 @@
+// Příklad koncepce pro ESP8266 firmware (C++/Arduino)
+String get_time() {
+  // Zde by se měřil čas a poté se sestaví JSON řetězec
+  String json = "{\"time\": \"";
+  json += String(millis()); // Použijte nějaký časový mechanismus ESP8266
+  json += "\"}";
+  return json;
+}
+
+void setup() {
+    // ... nastavení Wi-Fi jako AP ...
+    // Nastavit HTTP server, který bude odpovídat na /time s JSON datem
+}
