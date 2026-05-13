@@ -1,6 +1,0 @@
-#!/mnt/cb972861-8dbe-4511-9ae5-791e9a28fb4e/casomira/apk0.1b/kivy-build310/bin/python3.10
-import sys
-from virtualenv.__main__ import run_with_catch
-if __name__ == '__main__':
-    sys.argv[0] = sys.argv[0].removesuffix('.exe')
-    sys.exit(run_with_catch())
