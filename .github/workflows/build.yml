@@ -26,11 +26,12 @@ jobs:
 
     - name: Build EXE
       run: |
-        pyinstaller --onefile --noconsole src/casomira.py --name casomira
+        cd src
+        pyinstaller casomira.py --onefile --name casomira
 
     - name: Upload Release
       uses: softprops/action-gh-release@v2
       with:
-        files: dist/casomira.exe
+        files: src/dist/casomira.exe
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
