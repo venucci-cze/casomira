@@ -12,6 +12,8 @@ permissions:
 jobs:
   build:
     runs-on: windows-latest
+    permissions:
+      contents: write
 
     steps:
     - name: Checkout repo
@@ -32,7 +34,7 @@ jobs:
     - name: Build EXE
       run: |
         cd src
-        pyinstaller casomira.py --onefile --name casomira --icon=icon.ico
+        pyinstaller casomira.py --onefile --name casomira --icon=icon.ico --collect-all customtkinter
         pyinstaller updater.py --onefile --name updater --icon=icon.ico
 
     - name: Upload Release
