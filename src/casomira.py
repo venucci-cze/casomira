@@ -17,7 +17,10 @@ ctk.set_widget_scaling(0.9)  # Zvětší všechny widgety o 50% pro lepší čit
 ctk.set_window_scaling(0.9)  # Zvětší celé okno o 50% pro lepší čitelnost
 
 SINGLE_ESP_IP = "192.168.4.1"  # IP adresa jediného ESP8266
-URL = f"http://{SINGLE_ESP_IP}/data"
+active_esp_ip = SINGLE_ESP_IP
+
+def get_url():
+    return f"http://{active_esp_ip}/data"
 
 DATA_FILE = "timing_data.csv"
 BACKUP_FILE = "timing_data_backup.csv"
@@ -29,6 +32,8 @@ team_b_label = None
 tree = None
 status_label = None
 root = None
+esp_ip_entry = None
+esp_ip_label = None
 auto_measure_enabled = False
 auto_measure_id = None
 last_fetched_data = (None, None)  # Poslední načtená data
@@ -125,6 +130,23 @@ def delete_all():
     load_history()
 
 
+def set_esp_ip():
+    """Nastaví novou IP adresu pro připojení k ESP8266 v této relaci."""
+    global active_esp_ip, esp_ip_label, esp_ip_entry
+    if esp_ip_entry is None or esp_ip_label is None:
+        return
+
+    new_ip = esp_ip_entry.get().strip()
+    if not new_ip:
+        messagebox.showwarning("Nastavení IP", "Zadej platnou IP adresu.")
+        return
+
+    active_esp_ip = new_ip
+    esp_ip_label.configure(text=active_esp_ip)
+    status_label.configure(text=f"IP nastavena na {active_esp_ip}")
+    print(f"⚙️ IP adresa ESP8266 změněna na: {active_esp_ip}")
+
+
 def fetch_timing_data_async():
     """Čte data z ESP8266 v separátním vlákně a pak aktualizuje GUI."""
     thread = threading.Thread(target=_fetch_in_thread, daemon=True)
@@ -137,7 +159,7 @@ def _fetch_in_thread():
     print("--- Požadavek na časy ---")
     print("⏳ Čekám na odpověď z ESP8266...")
     try:
-        response = requests.get(URL, timeout=5)
+        response = requests.get(get_url(), timeout=5)
         response.raise_for_status()
         data = response.json()
         
@@ -265,7 +287,7 @@ def check_and_apply_update():
 
 def main_app():
     """Hlavní logika GUI."""
-    global time_label, team_a_label, team_b_label, tree, status_label, root
+    global time_label, team_a_label, team_b_label, tree, status_label, root, esp_ip_entry, esp_ip_label
     root = ctk.CTk()
     root.title("Časový Monitor ESP8266")
     root.geometry("900x520")
@@ -306,13 +328,13 @@ def main_app():
     title_buttons.pack(padx=5, pady=(5, 10), anchor="w")
 
     delete_last_button = ctk.CTkButton(frame_buttons, text="Odstranit poslední", command=delete_last)
-    delete_last_button.pack(pady=5, fill="x")
+    delete_last_button.pack(pady=5, padx=5, fill="x")
 
     delete_all_button = ctk.CTkButton(frame_buttons, text="Odstranit vše", command=delete_all)
-    delete_all_button.pack(pady=5, fill="x")
+    delete_all_button.pack(pady=5, padx=5, fill="x")
     
     update_button = ctk.CTkButton(frame_buttons, text="Kontrola aktualizací", command=check_and_apply_update)
-    update_button.pack(pady=5, fill="x")
+    update_button.pack(pady=5, padx=5, fill="x")
 
     # --- 2. Zobrazení aktuálních hodnot (Labely) ---
     frame_status = ctk.CTkFrame(root)
@@ -333,7 +355,7 @@ def main_app():
     team_b_label = ctk.CTkLabel(frame_status, text="--")
     team_b_label.grid(row=3, column=1, padx=5, pady=5, sticky='w')
 
-    ctk.CTkLabel(frame_status, text="IP adresa ESP8266:").grid(row=4, column=0, padx=5, pady=5, sticky='e')
+    ctk.CTkLabel(frame_status, text="Nastavená IP:").grid(row=4, column=0, padx=5, pady=5, sticky='e')
     esp_ip_label = ctk.CTkLabel(frame_status, text=SINGLE_ESP_IP)
     esp_ip_label.grid(row=4, column=1, padx=5, pady=5, sticky='w')
 
@@ -344,6 +366,13 @@ def main_app():
     ctk.CTkLabel(frame_status, text="Auto. měření:").grid(row=6, column=0, padx=5, pady=5, sticky='e')
     auto_measure_check = ctk.CTkCheckBox(frame_status, text="Zapnout", command=toggle_auto_measure)
     auto_measure_check.grid(row=6, column=1, padx=5, pady=5, sticky='w')
+
+    esp_ip_entry = ctk.CTkEntry(frame_status, width=100)
+    esp_ip_entry.grid(row=7, column=0, padx=5, pady=5, sticky='w')
+    esp_ip_entry.insert(0, SINGLE_ESP_IP)
+
+    set_ip_button = ctk.CTkButton(frame_status, text="Nastavit IP", command=set_esp_ip)
+    set_ip_button.grid(row=7, column=1, padx=5, pady=5, sticky='w')
 
     # --- 3. Tlačítko pro měření ---
     measure_button = ctk.CTkButton(root, text="Měřit", command=update_display, font=("Segoe UI", 14, "bold"))
